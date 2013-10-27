@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+
   def new  #this new action is creating a new post
     @post = Post.new
   end
@@ -17,6 +18,8 @@ class PostsController < ApplicationController
     @post = Post.find(params[:id]) #use that instance variable in your view!
   end
 
+  http_basic_authenticate_with name: "laura", password: "elephants", except: [:index, :show]
+
   def index
     @posts = Post.all
   end
@@ -28,11 +31,18 @@ class PostsController < ApplicationController
   def update
     @post = Post.find(params[:id])
 
-    if @post.update(params[:post].permit(:title, :text))
+    if @post.update(params[:post].permit(:title, :text)) #accepts a hash containing the attributes you want to update.
       redirect_to @post
     else
       render 'edit'
     end
+  end
+
+  def destroy
+    @post = Post.find(params[:id])
+    @post.destroy
+
+    redirect_to posts_path  #redirecting to the index action.
   end
 
   private
